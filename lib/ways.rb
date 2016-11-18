@@ -8,5 +8,6 @@ module Ways
   end 
 
   mattr_accessor :api
+  mattr_accessor :api_access_id
 
 end
