@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Ways
 
   class << self
@@ -27,15 +29,16 @@ module Ways
       time ||= Time.now
       date ||= Date.today
 
-      Ways.get_results(from, to, time, date, lang, opts)
-
+      get_results(from, to, time, date, lang, opts)
     end
 
     def prepare_results(from, to, time, date, lang, opts)
     end
 
     def get_results(from, to, time, date, lang, opts)
-      url = [api_url, parametrize(from, to, time, date, lang, opts)].join('?')
+      uri = URI(api_url)
+      uri.query = URI.encode_www_form([parametrize(from, to, time, date, lang, opts)])
+      Net::HTTP.get_response(uri)
     end
 
     def parametrize(from, to, time, date, lang, opts)
@@ -53,7 +56,7 @@ module Ways
       params.update( "#{api_arrival_bool_key}" => opts[:arrival] ) if opts[:arrival]
       params.update( "#{api_origin_walk_key}" => opts[:origin_walk] ) if opts[:origin_walk]
 
-      params.to_query
+      params
     end
   end
 

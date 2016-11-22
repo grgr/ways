@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe 'basic functionality' do
-  it 'should get a route' do
-    Ways.from_to(from, to)
+  it 'should be success' do
+    res = Visitor.new.go
+    expect(res).to eq(Net::HTTPSuccess)
   end
 
   def from
