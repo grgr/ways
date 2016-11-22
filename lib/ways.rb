@@ -12,6 +12,10 @@ module Ways
   mattr_accessor :api_time_key
   mattr_accessor :api_date_key
   mattr_accessor :api_arrival_bool_key
+  mattr_accessor :api_origin_walk_key
+
+  mattr_accessor :app_lat_key
+  mattr_accessor :app_long_key
 
   class << self
     def hello

@@ -14,4 +14,7 @@ Ways.setup do |config|
   config.api_arrival_bool_key = 'searchForArrival'
   config.api_origin_walk_key = 'originWalk'
 
+  config.app_lat_key = :lat
+  config.app_long_key = :long
+
 end
