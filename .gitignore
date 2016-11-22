@@ -1,1 +1,2 @@
 spec/test_app/log/*
+spec/test_app/config/*.yml

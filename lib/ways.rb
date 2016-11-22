@@ -1,3 +1,5 @@
+require 'active_support'
+
 module Ways
 
   mattr_accessor :api
@@ -26,7 +28,12 @@ module Ways
       yield self
     end 
 
-    def from_to(from, to, time, date, lang='de', opts={})
+    def from_to(from, to, time=nil, date=nil, lang='de', opts={})
+      time ||= Time.now
+      date ||= Date.today
+
+      Ways.get_results(from, to, time, date, lang, opts)
+
     end
 
     def prepare_results(from, to, time, date, lang, opts)
@@ -37,9 +44,6 @@ module Ways
     end
 
     def parametrize(from, to, time, date, lang, opts)
-      time ||= Time.now
-      date ||= Date.today
-
       params = {
         "#{api_access_id_key}" =>    api_access_id,
         "#{api_lang_key}" =>         lang,
@@ -48,10 +52,10 @@ module Ways
         "#{api_dest_lat_key}" =>     to[app_lat_key],
         "#{api_dest_long_key}" =>    to[app_long_key],
         "#{api_time_key}" =>         time,
-        "#{api_date_key}" =>         date,
-        "#{api_arrival_bool_key}" => arrival
+        "#{api_date_key}" =>         date
       }
       
+      params.update( "#{api_arrival_bool_key}" => opts[:arrival] ) if opts[:arrival]
       params.update( "#{api_origin_walk_key}" => opts[:origin_walk] ) if opts[:origin_walk]
 
       params.to_query
