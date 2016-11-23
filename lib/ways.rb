@@ -5,7 +5,8 @@ module Ways
   class << self
 
     mattr_accessor :api
-    mattr_accessor :api_url
+    mattr_accessor :api_base_url
+    mattr_accessor :api_trip_url
     mattr_accessor :api_access_id
     mattr_accessor :api_access_id_key 
     mattr_accessor :api_lang_key 
@@ -17,6 +18,8 @@ module Ways
     mattr_accessor :api_date_key
     mattr_accessor :api_arrival_bool_key
     mattr_accessor :api_origin_walk_key
+    mattr_accessor :api_format_key
+    mattr_accessor :api_format
 
     mattr_accessor :app_lat_key
     mattr_accessor :app_long_key
@@ -25,23 +28,24 @@ module Ways
       yield self
     end 
 
-    def from_to(from, to, time=nil, date=nil, lang='de', opts={})
-      time ||= Time.now
-      date ||= Date.today
+    def from_to(from, to, date_time=nil, lang='de', opts={})
+      date_time ||= DateTime.now
 
-      get_results(from, to, time, date, lang, opts)
+      get_results(from, to, date_time, lang, opts)
     end
 
-    def prepare_results(from, to, time, date, lang, opts)
+    def prepare_results(from, to, date_time, lang, opts)
     end
 
-    def get_results(from, to, time, date, lang, opts)
-      uri = URI(api_url)
-      uri.query = URI.encode_www_form([parametrize(from, to, time, date, lang, opts)])
-      Net::HTTP.get_response(uri)
+    def get_results(from, to, date_time, lang, opts)
+      uri = URI(api_trip_url)
+      uri.query = URI.encode_www_form(parametrize(from, to, date_time, lang, opts))
+      res = Net::HTTP.get_response(uri)
+      binding.pry
+      res
     end
 
-    def parametrize(from, to, time, date, lang, opts)
+    def parametrize(from, to, date_time, lang, opts)
       params = {
         "#{api_access_id_key}" =>    api_access_id,
         "#{api_lang_key}" =>         lang,
@@ -49,8 +53,9 @@ module Ways
         "#{api_origin_long_key}" =>  from[app_long_key],
         "#{api_dest_lat_key}" =>     to[app_lat_key],
         "#{api_dest_long_key}" =>    to[app_long_key],
-        "#{api_time_key}" =>         time,
-        "#{api_date_key}" =>         date
+        "#{api_time_key}" =>         date_time.strftime('%H:%M'),
+        "#{api_date_key}" =>         date_time.strftime('%Y-%m-%d'),
+        "#{api_format_key}" =>       api_format
       }
       
       params.update( "#{api_arrival_bool_key}" => opts[:arrival] ) if opts[:arrival]
