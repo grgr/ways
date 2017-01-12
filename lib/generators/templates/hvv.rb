@@ -1,12 +1,14 @@
 Ways.setup do |config|
 
   # query 
-  config.api = :vbb
-  config.api_base_url = "http://demo.hafas.de/openapi/vbb-proxy/"
-  config.api_trip_url = "http://demo.hafas.de/openapi/vbb-proxy/trip"
-  config.api_access_id = ENV['VBB_ACCESS_ID']
-  config.api_access_id_key = 'accessId'
-  config.api_lang_key = 'lang'
+  config.api = :hvv
+  config.api_trip_url = "http://api-test.geofox.de/gti/public/getRoute"
+  config.api_username_key = 'geofox-auth-user'
+  config.api_username = ENV['HVV_USERNAME']
+  config.api_password_key = 'geofox-auth-signature'
+  config.api_password = ENV['HVV_PASSWORD']
+  config.api_version = '30.3'
+  config.api_lang_key = 'language'
   config.api_origin_lat_key = 'originCoordLat'
   config.api_origin_long_key = 'originCoordLong'
   config.api_dest_lat_key = 'destCoordLat'

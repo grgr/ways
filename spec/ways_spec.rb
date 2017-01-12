@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'basic functionality' do
   it 'should be success' do
-    res = Ways.get_results(from, to, DateTime.now, 'de', {})
+    res = Ways::Vbb.get_results(from, to, DateTime.now, 'de', {})
     #expect(res).to eq(Net::HTTPOK)
     expect(res).to be_kind_of(Net::HTTPOK)
   end
