@@ -1,4 +1,5 @@
 require 'net/http'
+require 'digest/sha1'
 
 module Ways
   module Hvv
@@ -43,9 +44,16 @@ module Ways
 
       def get_results(from, to, date_time, lang, opts)
         uri = URI(Ways.api_trip_url)
-        uri.query = URI.encode_www_form(parametrize(from, to, date_time, lang, opts))
-        res = Net::HTTP.get_response(uri)
-        res
+        req = Net::HTTP::Post.new(uri)
+        req.basic_auth Ways.api_username, Ways.api_password
+        #req[Ways.api_username_key] = Ways.api_username
+        #req[Ways.api_password_key] = Base64.strict_encode64(Digest::SHA1.digest(Ways.api_password))
+        #req[Ways.api_password_key] = Digest::SHA1.base64digest Ways.api_password
+        req.set_form_data(parametrize(from, to, date_time, lang, opts))
+
+        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+            http.request(req)
+        end
       end
 
       def parametrize(from, to, date_time, lang, opts)
