@@ -73,6 +73,33 @@ module Ways
         params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) if opts[:origin_walk]
 
         params
+        {
+        "language": "de",
+          "version": 30,
+          "filterType":"HVV_LISTED",
+          "start": {
+            "name": "Rosenhof",
+            "city": "Ahrensburg",
+            "combinedName": "Ahrensburg, Rosenhof",
+            "id": "Master:35009",
+            "type": "STATION"
+          },
+          "dest": {
+            "name": "StadthausBrücke",
+            "city": "Hamburg",
+            "combinedName": "StadthausBrücke",
+            "id": "Master:11952",
+            "type": "STATION"
+          },
+          "via": {
+            "name": "Kellinghusenstraße"
+          },
+          "time": {
+            "date": "03.04.2013", "time": "13:10"
+          },
+          "timeIsDeparture": true,
+          "numberOfSchedules": 3
+        }
       end
 
     end
