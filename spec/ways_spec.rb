@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe 'basic functionality' do
-  it 'should be success' do
-    res = Ways::Vbb.get_results(from, to, DateTime.now, 'de', {})
-    #expect(res).to eq(Net::HTTPOK)
+describe 'Ways' do
+  it 'basic API call should be success' do
+    puts "Testing #{Ways.api}-API. To test other APIs run 'cd spec/test_app && rails g ways NAME_OF_API'" 
+    res = "Ways::#{Ways.api.to_s.classify}".constantize.get_results(from, to, DateTime.now, 'de', {})
     expect(res).to be_kind_of(Net::HTTPOK)
   end
 
