@@ -44,8 +44,7 @@ module Ways
       def get_results(from, to, date_time, lang, opts)
         uri = URI(Ways.api_trip_url)
         uri.query = URI.encode_www_form(parametrize(from, to, date_time, lang, opts))
-        res = Net::HTTP.get_response(uri)
-        res
+        Net::HTTP.get_response(uri)
       end
 
       def parametrize(from, to, date_time, lang, opts)
