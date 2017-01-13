@@ -49,8 +49,7 @@ module Ways
       def get_results(from, to, date_time, lang, opts)
         uri = URI(Ways.api_trip_url)
         req = Net::HTTP::Post.new(uri)
-        req.body = {}.to_json
-        #req.body = parametrize(from, to, date_time, lang, opts).to_json
+        req.body = parametrize(from, to, date_time, lang, opts).to_json
 
         hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), Ways.api_password.encode("UTF-8"), req.body.to_s)
         signature = Base64.encode64(hmac).chomp
@@ -75,13 +74,15 @@ module Ways
             "coordinate" => {
               "#{Ways.api_origin_lat_key}" =>   from[Ways.app_lat_key],
               "#{Ways.api_origin_long_key}" =>  from[Ways.app_long_key],
-            }
+            },
+            "type" => "COORDINATE"
           },
           "dest" => {
             "coordinate" => {
               "#{Ways.api_dest_lat_key}" =>     to[Ways.app_lat_key],
               "#{Ways.api_dest_long_key}" =>    to[Ways.app_long_key],
-            }
+            },
+            "type" => "COORDINATE"
           },
           "time" => {
             "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
