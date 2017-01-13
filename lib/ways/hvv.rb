@@ -1,9 +1,7 @@
 require 'net/http'
-#require 'digest/sha1'
 require 'base64'
 require 'cgi'
 require 'openssl'
-#require 'hmac-sha1'
 
 module Ways
   module Hvv
@@ -70,23 +68,23 @@ module Ways
         params = {
           "#{Ways.api_version_key}" =>      Ways.api_version,
           "#{Ways.api_lang_key}" =>         lang,
-          "start" => {
-            "coordinate" => {
-              "#{Ways.api_origin_lat_key}" =>   from[Ways.app_lat_key],
-              "#{Ways.api_origin_long_key}" =>  from[Ways.app_long_key],
+          "#{Ways.api_origin_key}" => {
+            "#{Ways.place_type.downcase}" => {
+              "#{Ways.api_origin_lat_key}" =>  from[Ways.app_lat_key],
+              "#{Ways.api_origin_long_key}" => from[Ways.app_long_key],
             },
-            "type" => "COORDINATE"
+            "#{Ways.place_type_key}" => Ways.place_type 
           },
-          "dest" => {
-            "coordinate" => {
-              "#{Ways.api_dest_lat_key}" =>     to[Ways.app_lat_key],
-              "#{Ways.api_dest_long_key}" =>    to[Ways.app_long_key],
+          "#{Ways.api_dest_key}" => {
+            "#{Ways.place_type.downcase}" => {
+              "#{Ways.api_dest_lat_key}" =>    to[Ways.app_lat_key],
+              "#{Ways.api_dest_long_key}" =>   to[Ways.app_long_key],
             },
-            "type" => "COORDINATE"
+            "#{Ways.place_type_key}" => Ways.place_type 
           },
-          "time" => {
-            "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
-            "#{Ways.api_date_key}" =>         date_time.strftime('%d.%m.%Y'),
+          "#{Ways.api_time_key}" => {
+            "#{Ways.api_time_key}" =>          date_time.strftime('%H:%M'),
+            "#{Ways.api_date_key}" =>          date_time.strftime('%d.%m.%Y'),
           }
         }
         

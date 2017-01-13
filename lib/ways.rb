@@ -18,12 +18,16 @@ module Ways
     mattr_accessor :api_version_key
     mattr_accessor :api_version
     mattr_accessor :api_lang_key 
+    mattr_accessor :api_origin_key
     mattr_accessor :api_origin_lat_key
     mattr_accessor :api_origin_long_key
+    mattr_accessor :api_dest_key
     mattr_accessor :api_dest_lat_key
     mattr_accessor :api_dest_long_key
     mattr_accessor :api_time_key
     mattr_accessor :api_date_key
+    mattr_accessor :place_type_key
+    mattr_accessor :place_type
     mattr_accessor :api_arrival_bool_key
     mattr_accessor :api_origin_walk_key
     mattr_accessor :api_format_key

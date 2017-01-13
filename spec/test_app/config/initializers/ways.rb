@@ -2,7 +2,7 @@ Ways.setup do |config|
 
   # query 
   config.api = :hvv
-  config.api_trip_url = "http://api-test.geofox.de/gti/public/getRoute"
+  config.api_trip_url = "https://api-test.geofox.de/gti/public/getRoute"
   config.api_username_key = 'geofox-auth-user'
   config.api_username = ENV['HVV_USERNAME']
   config.api_password_key = 'geofox-auth-signature'
@@ -10,12 +10,16 @@ Ways.setup do |config|
   config.api_version_key = 'version'
   config.api_version = '30'
   config.api_lang_key = 'language'
+  config.api_origin_key = 'start'
   config.api_origin_lat_key = 'x'
   config.api_origin_long_key = 'y'
+  config.api_dest_key = 'dest'
   config.api_dest_lat_key = 'x'
   config.api_dest_long_key = 'y'
   config.api_time_key = 'time'
   config.api_date_key = 'date'
+  config.place_type_key = 'type'
+  config.place_type = 'COORDINATE'
   config.api_arrival_bool_key = 'searchForArrival'
   config.api_origin_walk_key = 'originWalk'
   config.api_format_key = 'format'
