@@ -15,6 +15,7 @@ module Ways
     mattr_accessor :api_username
     mattr_accessor :api_password_key
     mattr_accessor :api_password
+    mattr_accessor :api_version_key
     mattr_accessor :api_version
     mattr_accessor :api_lang_key 
     mattr_accessor :api_origin_lat_key
