@@ -1,5 +1,9 @@
 require 'net/http'
-require 'digest/sha1'
+#require 'digest/sha1'
+require 'base64'
+require 'cgi'
+require 'openssl'
+#require 'hmac-sha1'
 
 module Ways
   module Hvv
@@ -44,62 +48,64 @@ module Ways
 
       def get_results(from, to, date_time, lang, opts)
         uri = URI(Ways.api_trip_url)
-        req = Net::HTTP::Post.new(uri)
-        req.basic_auth Ways.api_username, Ways.api_password
-        #req[Ways.api_username_key] = Ways.api_username
-        #req[Ways.api_password_key] = Base64.strict_encode64(Digest::SHA1.digest(Ways.api_password))
-        #req[Ways.api_password_key] = Digest::SHA1.base64digest Ways.api_password
-        req.set_form_data(parametrize(from, to, date_time, lang, opts))
+        req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+        #req.set_form_data({})
+        #req.set_form_data(parametrize(from, to, date_time, lang, opts))
+        #
+        req.body = {}.to_json
+        #req.body = parametrize(from, to, date_time, lang, opts).to_json
+        #req.body = URI.encode_www_form(parametrize(from, to, date_time, lang, opts))
 
-        res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        secret = Ways.api_password
+        data = req.body #Ways.api_trip_url
+        #hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), secret.encode("UTF-8"), data.encode("UTF-8"))
+        hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), secret.encode("UTF-8"), data.to_s)
+        signature = Base64.encode64(hmac).chomp
+
+        #req.basic_auth Ways.api_username, Ways.api_password
+        req[Ways.api_username_key] = Ways.api_username
+        req[Ways.api_password_key] = signature
+        #req[Ways.api_password_key] = Base64.encode64((HMAC::SHA1.new(Ways.api_password) << 'base').digest).strip
+        #req[Ways.api_password_key] = Base64.strict_encode64(Digest::SHA1.hexdigest(Ways.api_password))
+        #req[Ways.api_password_key] = Digest::SHA1.base64digest(Ways.api_password)
+        req['geofox-auth-type'] = 'HmacSHA1'
+        req['Accept'] = 'application/json'
+        #req['Content-type'] = 'application/json'
+
+        binding.pry
+        res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
             http.request(req)
         end
       end
 
       def parametrize(from, to, date_time, lang, opts)
         params = {
-          "#{Ways.api_access_id_key}" =>    Ways.api_access_id,
+          #"Ways.api_username_key" => Ways.api_username,
+          #"Ways.api_password_key" => Digest::SHA1.base64digest(Ways.api_password),
+          "#{Ways.api_version_key}" =>      Ways.api_version,
           "#{Ways.api_lang_key}" =>         lang,
-          "#{Ways.api_origin_lat_key}" =>   from[Ways.app_lat_key],
-          "#{Ways.api_origin_long_key}" =>  from[Ways.app_long_key],
-          "#{Ways.api_dest_lat_key}" =>     to[Ways.app_lat_key],
-          "#{Ways.api_dest_long_key}" =>    to[Ways.app_long_key],
-          "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
-          "#{Ways.api_date_key}" =>         date_time.strftime('%Y-%m-%d'),
-          "#{Ways.api_format_key}" =>       Ways.api_format
+          "start" => {
+            "coordinate" => {
+              "#{Ways.api_origin_lat_key}" =>   from[Ways.app_lat_key],
+              "#{Ways.api_origin_long_key}" =>  from[Ways.app_long_key],
+            }
+          },
+          "dest" => {
+            "coordinate" => {
+              "#{Ways.api_dest_lat_key}" =>     to[Ways.app_lat_key],
+              "#{Ways.api_dest_long_key}" =>    to[Ways.app_long_key],
+            }
+          },
+          "time" => {
+            "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
+            "#{Ways.api_date_key}" =>         date_time.strftime('%Y-%m-%d'),
+          }
         }
         
         params.update( "#{Ways.api_arrival_bool_key}" => opts[:arrival] ) if opts[:arrival]
         params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) if opts[:origin_walk]
 
         params
-        {
-        "language": "de",
-          "version": 30,
-          "filterType":"HVV_LISTED",
-          "start": {
-            "name": "Rosenhof",
-            "city": "Ahrensburg",
-            "combinedName": "Ahrensburg, Rosenhof",
-            "id": "Master:35009",
-            "type": "STATION"
-          },
-          "dest": {
-            "name": "StadthausBrücke",
-            "city": "Hamburg",
-            "combinedName": "StadthausBrücke",
-            "id": "Master:11952",
-            "type": "STATION"
-          },
-          "via": {
-            "name": "Kellinghusenstraße"
-          },
-          "time": {
-            "date": "03.04.2013", "time": "13:10"
-          },
-          "timeIsDeparture": true,
-          "numberOfSchedules": 3
-        }
       end
 
     end
