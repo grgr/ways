@@ -48,31 +48,20 @@ module Ways
 
       def get_results(from, to, date_time, lang, opts)
         uri = URI(Ways.api_trip_url)
-        req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-        #req.set_form_data({})
-        #req.set_form_data(parametrize(from, to, date_time, lang, opts))
-        #
+        req = Net::HTTP::Post.new(uri)
         req.body = {}.to_json
         #req.body = parametrize(from, to, date_time, lang, opts).to_json
-        #req.body = URI.encode_www_form(parametrize(from, to, date_time, lang, opts))
 
-        secret = Ways.api_password
-        data = req.body #Ways.api_trip_url
-        #hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), secret.encode("UTF-8"), data.encode("UTF-8"))
-        hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), secret.encode("UTF-8"), data.to_s)
+        hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), Ways.api_password.encode("UTF-8"), req.body.to_s)
         signature = Base64.encode64(hmac).chomp
 
-        #req.basic_auth Ways.api_username, Ways.api_password
         req[Ways.api_username_key] = Ways.api_username
         req[Ways.api_password_key] = signature
-        #req[Ways.api_password_key] = Base64.encode64((HMAC::SHA1.new(Ways.api_password) << 'base').digest).strip
-        #req[Ways.api_password_key] = Base64.strict_encode64(Digest::SHA1.hexdigest(Ways.api_password))
-        #req[Ways.api_password_key] = Digest::SHA1.base64digest(Ways.api_password)
+
         req['geofox-auth-type'] = 'HmacSHA1'
         req['Accept'] = 'application/json'
-        #req['Content-type'] = 'application/json'
+        req['Content-type'] = 'application/json'
 
-        binding.pry
         res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
             http.request(req)
         end
@@ -80,8 +69,6 @@ module Ways
 
       def parametrize(from, to, date_time, lang, opts)
         params = {
-          #"Ways.api_username_key" => Ways.api_username,
-          #"Ways.api_password_key" => Digest::SHA1.base64digest(Ways.api_password),
           "#{Ways.api_version_key}" =>      Ways.api_version,
           "#{Ways.api_lang_key}" =>         lang,
           "start" => {
@@ -98,7 +85,7 @@ module Ways
           },
           "time" => {
             "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
-            "#{Ways.api_date_key}" =>         date_time.strftime('%Y-%m-%d'),
+            "#{Ways.api_date_key}" =>         date_time.strftime('%d.%m.%Y'),
           }
         }
         
