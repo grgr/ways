@@ -8,6 +8,9 @@ You will need access to the APIs this gem is based on.
 * Hamburg: HVV
 * Berlin: VBB
 
+It is best to set the access keys as environment variables. Have a look into th initializer file config/initializers/ways.rb for key naming. 
+
+
 ## Installation
 
 Add the gem to your Gemfile:
