@@ -12,7 +12,12 @@ class Visitor < ActiveRecord::Base
     data[Ways.api]
   end
 
+  def self.datetime
+    DateTime.new(2017,2,3,16,5,6)
+  end
+
   def go
-    Ways.from_to(Visitor.origin, Visitor.dest)
+    ways = Ways.from_to(Visitor.origin, Visitor.dest, date_time: Visitor.datetime, arrival: true)
+    ways
   end
 end

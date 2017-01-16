@@ -29,6 +29,7 @@ module Ways
     mattr_accessor :place_type_key
     mattr_accessor :place_type
     mattr_accessor :api_arrival_bool_key
+    mattr_accessor :api_departure_bool_key
     mattr_accessor :api_origin_walk_key
     mattr_accessor :api_format_key
     mattr_accessor :api_format
@@ -72,8 +73,11 @@ module Ways
       yield self
     end 
 
-    def from_to(from, to, date_time=nil, lang='de', opts={})
-      date_time ||= DateTime.now
+    def from_to(from, to, opts={})
+      date_time = opts[:date_time] || DateTime.now
+      lang = opts[:lang] || 'de'
+
+      opts.update arrival: false if opts[:arrival].nil?
 
       results = "Ways::#{Ways.api.to_s.classify}".constantize.get_results(from, to, date_time, lang, opts)
       "Ways::#{Ways.api.to_s.classify}".constantize.prepare_results(results)

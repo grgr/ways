@@ -20,7 +20,7 @@ Ways.setup do |config|
   config.api_date_key = 'date'
   config.place_type_key = 'type'
   config.place_type = 'COORDINATE'
-  #config.api_arrival_bool_key = 'searchForArrival'
+  config.api_departure_bool_key = 'timeIsDeparture'
   #config.api_origin_walk_key = 'originWalk'
   #config.api_format_key = 'format'
   #config.api_format = 'json'

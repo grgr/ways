@@ -60,8 +60,8 @@ module Ways
           "#{Ways.api_format_key}" =>       Ways.api_format
         }
         
-        params.update( "#{Ways.api_arrival_bool_key}" => opts[:arrival] ) if opts[:arrival]
-        params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) if opts[:origin_walk]
+        params.update( "#{Ways.api_arrival_bool_key}" => !opts[:arrival] ) unless opts[:arrival].nil?
+        params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) unless opts[:origin_walk].nil?
 
         params
       end
