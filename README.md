@@ -1,2 +1,7 @@
 # ways
-Gather route descriptions with different transport media. Bind to various APIs like Graphhopper, HVV or VBB
+Simple Rails wrapper-gem to get public transport routes between coordinates. 
+At the moment only Berlin and Hamburg (Germany) are supported.
+
+## Note
+You will need access to the APIs this gem is based on.
+HVV
