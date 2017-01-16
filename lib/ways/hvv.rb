@@ -10,9 +10,9 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
-        parsed[Ways.resp_trip_key].inject([]) do |results, trip|
+        parsed[Ways.resp_leglist_key].inject([]) do |results, trip|
           result = {duration: trip[Ways.resp_trip_duration_key]}
-          result.update leglist: extract_leg_info(trip[Ways.resp_leglist_key]) 
+          result.update leglist: extract_leg_info(trip) 
           results << result
           results
         end
@@ -23,20 +23,20 @@ module Ways
 
           extracted = {info: {}, origin: {}, dest: {}}
 
-          extracted[:info].update index: leg[Ways.resp_leg_idx_key]
-          extracted[:info].update type: leg[Ways.resp_leg_type_key]
-          extracted[:info].update direction: leg[Ways.resp_leg_direction_key]
-          extracted[:info].update category: leg[Ways.resp_leg_category_key]
-          extracted[:info].update name: leg[Ways.resp_leg_name_key]
-          extracted[:info].update duration: leg[Ways.resp_leg_duration_key]
-          extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
+          #extracted[:info].update index: leg[Ways.resp_leg_idx_key]
+          extracted[:info].update type: leg[Ways.resp_leg_line_key][Ways.resp_leg_type_key][Ways.resp_leg_simple_type_key]
+          extracted[:info].update direction: leg[Ways.resp_leg_line_key][Ways.resp_leg_direction_key]
+          #extracted[:info].update category: leg[Ways.resp_leg_category_key]
+          #extracted[:info].update name: leg[Ways.resp_leg_name_key]
+          #extracted[:info].update duration: leg[Ways.resp_leg_duration_key]
+          #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
 
           extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
-          extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_time_key]
+          extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_datetime_key][Ways.resp_leg_origin_time_key]
           extracted[:origin].update date: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_date_key]
 
           extracted[:dest].update name: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_name_key]
-          extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_time_key]
+          extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_time_key]
           extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_date_key]
 
           new_leglist << extracted

@@ -41,7 +41,9 @@ module Ways
 
     # response leg general info
     mattr_accessor :resp_leg_idx_key
+    mattr_accessor :resp_leg_line_key
     mattr_accessor :resp_leg_type_key
+    mattr_accessor :resp_leg_simple_type_key
     mattr_accessor :resp_leg_direction_key
     mattr_accessor :resp_leg_category_key
     mattr_accessor :resp_leg_name_key
@@ -51,12 +53,14 @@ module Ways
     # response leg origin
     mattr_accessor :resp_leg_origin_key
     mattr_accessor :resp_leg_origin_name_key
+    mattr_accessor :resp_leg_origin_datetime_key
     mattr_accessor :resp_leg_origin_time_key
     mattr_accessor :resp_leg_origin_date_key
 
     # response leg destination
     mattr_accessor :resp_leg_dest_key
     mattr_accessor :resp_leg_dest_name_key
+    mattr_accessor :resp_leg_dest_datetime_key
     mattr_accessor :resp_leg_dest_time_key
     mattr_accessor :resp_leg_dest_date_key
 
