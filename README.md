@@ -1,7 +1,31 @@
 # ways
 Simple Rails wrapper-gem to get public transport routes between coordinates. 
+
 At the moment only Berlin and Hamburg (Germany) are supported.
 
-## Note
+#### Note
 You will need access to the APIs this gem is based on.
-HVV
+* Hamburg: HVV
+* Berlin: VBB
+
+## Installation
+
+Add the gem to your Gemfile:
+
+```ruby
+gem 'ways', git: 'git://github.com/grgr/ways.git'
+```
+
+after `bundle` create the propriate initializer file with:
+
+```bash
+rails g ways [hvv|vbb]
+```
+
+## Usage
+```ruby
+from = {lat: 53.556127, long: 10.016097}
+to   = {lat: 53.562644, long: 9.961241}
+
+ways = Ways.from_to(from, to)
+```
