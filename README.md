@@ -29,7 +29,18 @@ rails g ways [hvv|vbb]
 ```ruby
 from = {lat: 53.556127, long: 10.016097}
 to   = {lat: 53.562644, long: 9.961241}
+
+ways = Ways.from_to(from, to)
+```
+from and to are the only necessary parameters. Ways expects you to search a journey starting now at from.
+
+But there are more parameters, which can be passed as hash:
+
+* arrival: boolean - default false. Specified time or now is arrival time?
+* date_time: DateTime - default now. Departure or arrival time.
+
+```ruby
 datetime = DateTime.new(2017,2,3,16,5,6)
 
-ways = Ways.from_to(from, to, datetime)
+ways = Ways.from_to(from, to, { date_time: datetime, arrival: true })
 ```
