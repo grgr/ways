@@ -29,6 +29,7 @@ rails g ways [hvv|vbb]
 ```ruby
 from = {lat: 53.556127, long: 10.016097}
 to   = {lat: 53.562644, long: 9.961241}
+datetime = DateTime.new(2017,2,3,16,5,6)
 
-ways = Ways.from_to(from, to)
+ways = Ways.from_to(from, to, datetime)
 ```
