@@ -36,11 +36,14 @@ from and to are the only necessary parameters. Ways expects you to search a jour
 
 But there are more parameters, which can be passed as hash:
 
+* lang: ['de' | 'en'] - default 'de'. Language.
 * arrival: boolean - default false. Specified time or now is arrival time?
 * date_time: DateTime - default now. Departure or arrival time.
+* trips_before: int - default 0. How many trips before the given time?
+* trips_after: int - default 1. How many trips after the given time incl. the trip for the given time. 
 
 ```ruby
 datetime = DateTime.new(2017,2,3,16,5,6)
 
-ways = Ways.from_to(from, to, { date_time: datetime, arrival: true })
+ways = Ways.from_to(from, to, { date_time: datetime, arrival: true, lang: 'en', trips_before: 2, trips_after: 3 })
 ```
