@@ -7,12 +7,21 @@ describe 'Ways' do
     expect(res).to be_kind_of(Net::HTTPOK)
   end
 
-  it 'should return trip response' do
+  it 'default request should return trip response' do
     res = Visitor.new.go
     expect(res).to be_kind_of(Array)
+    expect(res.length).to be 1
     expect(res[0]).to have_key(:duration)
     expect(res[0][:duration].to_s).to match(/\d+/)
     #expect(res[0][:duration]).to match(/PT\d+M/)
+  end
+
+  it 'request with all opts changed should return trip response' do
+    res = Visitor.new.go_further
+    expect(res).to be_kind_of(Array)
+    expect(res.length).to be 5
+    expect(res[0]).to have_key(:duration)
+    expect(res[0][:duration].to_s).to match(/\d+/)
   end
 
   def from
