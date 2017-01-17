@@ -12,8 +12,10 @@ Ways.setup do |config|
   config.api_dest_long_key = 'destCoordLong'
   config.api_time_key = 'time'
   config.api_date_key = 'date'
-  config.api_arrival_bool_key = 'searchForArrival'
   config.api_origin_walk_key = 'originWalk'
+  config.api_arrival_bool_key = 'searchForArrival'
+  config.api_results_before_count_key = 'numB'
+  config.api_results_after_count_key = 'numF'
   config.api_format_key = 'format'
   config.api_format = 'json'
 

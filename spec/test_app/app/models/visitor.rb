@@ -18,6 +18,7 @@ class Visitor < ActiveRecord::Base
 
   def go
     ways = Ways.from_to(Visitor.origin, Visitor.dest, date_time: Visitor.datetime, arrival: true)
+    #binding.pry
     ways
   end
 end

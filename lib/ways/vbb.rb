@@ -7,6 +7,7 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
+        binding.pry
         parsed[Ways.resp_trip_key].inject([]) do |results, trip|
           result = {duration: trip[Ways.resp_trip_duration_key]}
           result.update leglist: extract_leg_info(trip[Ways.resp_leglist_key]) 
@@ -61,6 +62,8 @@ module Ways
         }
         
         params.update( "#{Ways.api_arrival_bool_key}" => !opts[:arrival] ) unless opts[:arrival].nil?
+        params.update( "#{Ways.api_results_before_count_key}" => opts[:trips_before] ) unless opts[:trips_before].nil?
+        params.update( "#{Ways.api_results_after_count_key}" => opts[:trips_after] ) unless opts[:trips_after].nil?
         params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) unless opts[:origin_walk].nil?
 
         params

@@ -21,6 +21,8 @@ Ways.setup do |config|
   config.place_type_key = 'type'
   config.place_type = 'COORDINATE'
   config.api_departure_bool_key = 'timeIsDeparture'
+  config.api_results_after_count_key = 'schedulesAfter'
+  config.api_results_before_count_key = 'schedulesBefore'
   #config.api_origin_walk_key = 'originWalk'
   #config.api_format_key = 'format'
   #config.api_format = 'json'

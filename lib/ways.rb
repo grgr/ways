@@ -30,6 +30,8 @@ module Ways
     mattr_accessor :place_type
     mattr_accessor :api_arrival_bool_key
     mattr_accessor :api_departure_bool_key
+    mattr_accessor :api_results_before_count_key
+    mattr_accessor :api_results_after_count_key
     mattr_accessor :api_origin_walk_key
     mattr_accessor :api_format_key
     mattr_accessor :api_format
@@ -78,6 +80,8 @@ module Ways
       lang = opts[:lang] || 'de'
 
       opts.update arrival: false if opts[:arrival].nil?
+      opts.update trips_after: 1 if opts[:trips_after].nil?
+      opts.update trips_before: 0 if opts[:trips_before].nil?
 
       results = "Ways::#{Ways.api.to_s.classify}".constantize.get_results(from, to, date_time, lang, opts)
       "Ways::#{Ways.api.to_s.classify}".constantize.prepare_results(results)
