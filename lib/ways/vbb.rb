@@ -23,10 +23,10 @@ module Ways
           #extracted[:info].update index: leg[Ways.resp_leg_idx_key]
           extracted[:info].update type: unify_output(leg[Ways.resp_leg_type_key])
           extracted[:info].update direction: leg[Ways.resp_leg_direction_key]
-          extracted[:info].update category: leg[Ways.resp_leg_category_key]
-          extracted[:info].update name: leg[Ways.resp_leg_name_key]
-          extracted[:info].update duration: extract_duration(leg[Ways.resp_leg_duration_key])
-          extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
+          #extracted[:info].update category: leg[Ways.resp_leg_category_key]
+          #extracted[:info].update name: leg[Ways.resp_leg_name_key]
+          #extracted[:info].update duration: extract_duration(leg[Ways.resp_leg_duration_key])
+          #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
 
           extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
           extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_time_key]

@@ -10,7 +10,6 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
-        binding.pry
         parsed[Ways.resp_leglist_key].inject([]) do |results, trip|
           result = {duration: trip[Ways.resp_trip_duration_key]}
           result.update leglist: extract_leg_info(trip) 
@@ -40,7 +39,7 @@ module Ways
           extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_time_key]
           extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_date_key]
 
-          new_leglist << extracted
+          new_leglist << extracted if extracted[:info][:type] != 'CHANGE'
           new_leglist
         end
       end
