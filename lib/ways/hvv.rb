@@ -10,6 +10,7 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
+        binding.pry
         parsed[Ways.resp_leglist_key].inject([]) do |results, trip|
           result = {duration: trip[Ways.resp_trip_duration_key]}
           result.update leglist: extract_leg_info(trip) 
