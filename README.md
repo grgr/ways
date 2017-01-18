@@ -61,23 +61,23 @@ e.g.:
     :leglist=> [
       {
         :info=> {:type=>"WALK", :direction=>nil}, 
-        :origin=>{:name=>"Lindenstraße 40", :time=>"13:40", :date=>"18.01.2017"}, 
-        :dest=>{:name=>"Lohmühlenstraße", :time=>"13:47", :date=>"18.01.2017"}
+        :origin=>{:name=>"Lindenstraße 40", :type=>"ADDRESS", :serviceTypes=>nil, :time=>"13:40", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Lohmühlenstraße", :type=>"STATION", :serviceTypes=>"U", :time=>"13:47", :date=>"18.01.2017"}
       },
       {
         :info=>{:type=>"TRAIN", :direction=>"Ohlsdorf"}, 
-        :origin=>{:name=>"Lohmühlenstraße", :time=>"13:47", :date=>"18.01.2017"}, 
-        :dest=>{:name=>"Hallerstraße", :time=>"13:58", :date=>"18.01.2017"}
+        :origin=>{:name=>"Lohmühlenstraße", :type=>"STATION", :serviceTypes=>"U", :time=>"13:47", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Hallerstraße", :type=>"STATION", :serviceTypes=>"U", :time=>"13:58", :date=>"18.01.2017"}
       },
       {
         :info=>{:type=>"BUS", :direction=>"Bf. Altona"}, 
-        :origin=>{:name=>"U Hallerstraße", :time=>"14:03", :date=>"18.01.2017"}, 
-        :dest=>{:name=>"Schulterblatt", :time=>"14:13", :date=>"18.01.2017"}
+        :origin=>{:name=>"U Hallerstraße", :type=>"STATION", :serviceTypes=>"BUS", :time=>"14:03", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Schulterblatt", :type=>"STATION", :serviceTypes=>"BUS", :time=>"14:13", :date=>"18.01.2017"}
       },
       {
         :info=>{:type=>"WALK", :direction=>nil}, 
-        :origin=>{:name=>"Schulterblatt", :time=>"14:13", :date=>"18.01.2017"}, 
-        :dest=>{:name=>"Schulterblatt 79", :time=>"14:16", :date=>"18.01.2017"}
+        :origin=>{:name=>"Schulterblatt", :type=>"STATION", :serviceTypes=>"BUS", :time=>"14:13", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Schulterblatt 79", :type=>"ADDRESS", :serviceTypes=>nil, :time=>"14:16", :date=>"18.01.2017"}
       }
     ]
   }
