@@ -8,7 +8,7 @@ module Ways
       def prepare_results(res)
         parsed = JSON.parse(res.body)
         parsed[Ways.resp_trip_key].inject([]) do |results, trip|
-          result = {duration: trip[Ways.resp_trip_duration_key]}
+          result = {duration: extract_duration(trip[Ways.resp_trip_duration_key])}
           result.update leglist: extract_leg_info(trip[Ways.resp_leglist_key]) 
           results << result
           results
@@ -20,12 +20,12 @@ module Ways
 
           extracted = {info: {}, origin: {}, dest: {}}
 
-          extracted[:info].update index: leg[Ways.resp_leg_idx_key]
-          extracted[:info].update type: leg[Ways.resp_leg_type_key]
+          #extracted[:info].update index: leg[Ways.resp_leg_idx_key]
+          extracted[:info].update type: unify_output(leg[Ways.resp_leg_type_key])
           extracted[:info].update direction: leg[Ways.resp_leg_direction_key]
           extracted[:info].update category: leg[Ways.resp_leg_category_key]
           extracted[:info].update name: leg[Ways.resp_leg_name_key]
-          extracted[:info].update duration: leg[Ways.resp_leg_duration_key]
+          extracted[:info].update duration: extract_duration(leg[Ways.resp_leg_duration_key])
           extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
 
           extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
@@ -39,6 +39,26 @@ module Ways
           new_leglist << extracted
           new_leglist
         end
+      end
+
+      def unify_output(key)
+        unifier = {
+          'WALK' => 'WALK',
+          'JNY'  => 'TRAIN'
+        }
+        unifier[key] || key
+      end
+
+      def extract_duration(string)
+        return nil unless string
+
+        minutes = string.match(/\d+M/)
+        minutes = minutes && minutes[0].sub('M', '')
+
+        hours   = string.match(/\d+H/)
+        hours   = hours && hours[0].sub('M', '')
+
+        hours.to_i * 60 + minutes.to_i
       end
 
       def get_results(from, to, date_time, lang, opts)
