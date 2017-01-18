@@ -7,6 +7,7 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
+        #binding.pry
         parsed[Ways.resp_trip_key].inject([]) do |results, trip|
           result = {duration: extract_duration(trip[Ways.resp_trip_duration_key])}
           result.update leglist: extract_leg_info(trip[Ways.resp_leglist_key]) 
@@ -29,10 +30,14 @@ module Ways
           #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
 
           extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
+          extracted[:origin].update type: unify_output(leg[Ways.resp_leg_origin_key][Ways.resp_leg_type_key])
+          extracted[:origin].update serviceTypes: extract_service_types(extracted[:origin][:type], leg[Ways.resp_leg_category_key])
           extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_time_key]
           extracted[:origin].update date: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_date_key]
 
           extracted[:dest].update name: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_name_key]
+          extracted[:dest].update type: unify_output(leg[Ways.resp_leg_dest_key][Ways.resp_leg_type_key])
+          extracted[:dest].update serviceTypes: extract_service_types(extracted[:dest][:type], leg[Ways.resp_leg_category_key])
           extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_time_key]
           extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_date_key]
 
@@ -44,7 +49,9 @@ module Ways
       def unify_output(key)
         unifier = {
           'WALK' => 'WALK',
-          'JNY'  => 'TRAIN'
+          'JNY'  => 'TRAIN',
+          'ST'   => 'STATION',
+          'ADR'  => 'ADDRESS'
         }
         unifier[key] || key
       end
@@ -59,6 +66,10 @@ module Ways
         hours   = hours && hours[0].sub('M', '')
 
         hours.to_i * 60 + minutes.to_i
+      end
+
+      def extract_service_types(type, category)
+        type == 'STATION' ? category : nil
       end
 
       def get_results(from, to, date_time, lang, opts)

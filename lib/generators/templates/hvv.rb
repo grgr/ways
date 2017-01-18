@@ -37,6 +37,7 @@ Ways.setup do |config|
   #config.resp_leg_idx_key = 'idx'
   config.resp_leg_line_key = 'line'
   config.resp_leg_type_key = 'type'
+  config.resp_leg_service_types_key = 'serviceTypes'
   config.resp_leg_simple_type_key = 'simpleType'
   config.resp_leg_direction_key = 'direction'
   #config.resp_leg_category_key = 'category'

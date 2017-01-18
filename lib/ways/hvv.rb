@@ -10,6 +10,7 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
+        #binding.pry
         parsed[Ways.resp_leglist_key].inject([]) do |results, trip|
           result = {duration: trip[Ways.resp_trip_duration_key]}
           result.update leglist: extract_leg_info(trip) 
@@ -32,10 +33,14 @@ module Ways
           #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
 
           extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
+          extracted[:origin].update type: unify_output(leg[Ways.resp_leg_origin_key][Ways.resp_leg_type_key])
+          extracted[:origin].update serviceTypes: extract_service_types(leg[Ways.resp_leg_origin_key][Ways.resp_leg_service_types_key])
           extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_datetime_key][Ways.resp_leg_origin_time_key]
           extracted[:origin].update date: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_datetime_key][Ways.resp_leg_origin_date_key]
 
           extracted[:dest].update name: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_name_key]
+          extracted[:dest].update type: unify_output(leg[Ways.resp_leg_dest_key][Ways.resp_leg_type_key])
+          extracted[:dest].update serviceTypes: extract_service_types(leg[Ways.resp_leg_dest_key][Ways.resp_leg_service_types_key])
           extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_time_key]
           extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_date_key]
 
@@ -46,10 +51,16 @@ module Ways
 
       def unify_output(key)
         unifier = {
-          'FOOTPATH' => 'WALK',
-          'TRAIN'    => 'TRAIN'
+          'FOOTPATH'   => 'WALK',
+          'TRAIN'      => 'TRAIN',
+          'STATION'    => 'STATION',
+          'COORDINATE' => 'ADDRESS'
         }
         unifier[key] || key
+      end
+
+      def extract_service_types(key)
+        key && key.first && key.first.upcase
       end
 
       def get_results(from, to, date_time, lang, opts)

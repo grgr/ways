@@ -15,7 +15,7 @@ class Visitor < ActiveRecord::Base
   end
 
   def self.datetime
-    DateTime.new(2017,2,3,16,5,6)
+    DateTime.now + 3.days
   end
 
   def go

@@ -46,6 +46,7 @@ module Ways
     mattr_accessor :resp_leg_idx_key
     mattr_accessor :resp_leg_line_key
     mattr_accessor :resp_leg_type_key
+    mattr_accessor :resp_leg_service_types_key
     mattr_accessor :resp_leg_simple_type_key
     mattr_accessor :resp_leg_direction_key
     mattr_accessor :resp_leg_category_key
