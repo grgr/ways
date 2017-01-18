@@ -47,3 +47,40 @@ datetime = DateTime.new(2017,2,3,16,5,6)
 
 ways = Ways.from_to(from, to, { date_time: datetime, arrival: true, lang: 'en', trips_before: 2, trips_after: 3 })
 ```
+
+## Response
+
+For each trip (count specified via `:trips_before` and `:trips_after`) a hash containing the overall duration and a leglist are returned. Each leg in the leglist is a part of the trip and contains some info as well as origin, destination and departure- and arrival-times.
+
+e.g.:
+
+```ruby
+[
+  {
+    :duration=>36,
+    :leglist=> [
+      {
+        :info=> {:type=>"WALK", :direction=>nil}, 
+        :origin=>{:name=>"Lindenstraße 40", :time=>"13:40", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Lohmühlenstraße", :time=>"13:47", :date=>"18.01.2017"}
+      },
+      {
+        :info=>{:type=>"TRAIN", :direction=>"Ohlsdorf"}, 
+        :origin=>{:name=>"Lohmühlenstraße", :time=>"13:47", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Hallerstraße", :time=>"13:58", :date=>"18.01.2017"}
+      },
+      {
+        :info=>{:type=>"BUS", :direction=>"Bf. Altona"}, 
+        :origin=>{:name=>"U Hallerstraße", :time=>"14:03", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Schulterblatt", :time=>"14:13", :date=>"18.01.2017"}
+      },
+      {
+        :info=>{:type=>"WALK", :direction=>nil}, 
+        :origin=>{:name=>"Schulterblatt", :time=>"14:13", :date=>"18.01.2017"}, 
+        :dest=>{:name=>"Schulterblatt 79", :time=>"14:16", :date=>"18.01.2017"}
+      }
+    ]
+  }
+]
+
+```
