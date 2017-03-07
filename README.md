@@ -50,7 +50,7 @@ ways = Ways.from_to(from, to, { date_time: datetime, arrival: true, lang: 'en', 
 
 ## Response
 
-For each trip (count specified via `:trips_before` and `:trips_after`) a hash containing the overall duration and a leglist are returned. Each leg in the leglist is a part of the trip and contains some info as well as origin, destination and departure- and arrival-times.
+For each trip (count specified via `:trips_before` and `:trips_after`) a hash containing the overall duration in minutes and a leglist are returned. Each leg in the leglist is a part of the trip and contains some info as well as origin, destination and departure- and arrival-times.
 
 e.g.:
 
