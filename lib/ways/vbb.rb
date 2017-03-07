@@ -8,38 +8,33 @@ module Ways
       def prepare_results(res)
         parsed = JSON.parse(res.body)
         #binding.pry
-        parsed[Ways.resp_trip_key].inject([]) do |results, trip|
-          result = {duration: extract_duration(trip[Ways.resp_trip_duration_key])}
-          result.update leglist: extract_leg_info(trip[Ways.resp_leglist_key]) 
+        parsed['Trip'].inject([]) do |results, trip|
+          result = {duration: extract_duration(trip['duration'])}
+          result.update leglist: extract_leg_info(trip['LegList']) 
           results << result
           results
         end
       end
 
       def extract_leg_info(leglist)
-        leglist[Ways.resp_leg_key].inject([]) do |new_leglist, leg|
+        leglist['Leg'].inject([]) do |new_leglist, leg|
 
           extracted = {info: {}, origin: {}, dest: {}}
 
-          #extracted[:info].update index: leg[Ways.resp_leg_idx_key]
-          extracted[:info].update type: unify_output(leg[Ways.resp_leg_type_key])
-          extracted[:info].update direction: leg[Ways.resp_leg_direction_key]
-          #extracted[:info].update category: leg[Ways.resp_leg_category_key]
-          #extracted[:info].update name: leg[Ways.resp_leg_name_key]
-          #extracted[:info].update duration: extract_duration(leg[Ways.resp_leg_duration_key])
-          #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
+          extracted[:info].update type: unify_output(leg['type'])
+          extracted[:info].update direction: leg['direction']
 
-          extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
-          extracted[:origin].update type: unify_output(leg[Ways.resp_leg_origin_key][Ways.resp_leg_type_key])
-          extracted[:origin].update serviceTypes: extract_service_types(extracted[:origin][:type], leg[Ways.resp_leg_category_key])
-          extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_time_key]
-          extracted[:origin].update date: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_date_key]
+          extracted[:origin].update name: leg['Origin']['name']
+          extracted[:origin].update type: unify_output(leg['Origin']['type'])
+          extracted[:origin].update serviceTypes: extract_service_types(extracted[:origin][:type], leg['category'])
+          extracted[:origin].update time: leg['Origin']['time']
+          extracted[:origin].update date: leg['Origin']['date']
 
-          extracted[:dest].update name: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_name_key]
-          extracted[:dest].update type: unify_output(leg[Ways.resp_leg_dest_key][Ways.resp_leg_type_key])
-          extracted[:dest].update serviceTypes: extract_service_types(extracted[:dest][:type], leg[Ways.resp_leg_category_key])
-          extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_time_key]
-          extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_date_key]
+          extracted[:dest].update name: leg['Destination']['name']
+          extracted[:dest].update type: unify_output(leg['Destination']['type'])
+          extracted[:dest].update serviceTypes: extract_service_types(extracted[:dest][:type], leg['category'])
+          extracted[:dest].update time: leg['Destination']['time']
+          extracted[:dest].update date: leg['Destination']['date']
 
           new_leglist << extracted
           new_leglist
@@ -80,21 +75,21 @@ module Ways
 
       def parametrize(from, to, date_time, lang, opts)
         params = {
-          "#{Ways.api_access_id_key}" =>    Ways.api_access_id,
-          "#{Ways.api_lang_key}" =>         lang,
-          "#{Ways.api_origin_lat_key}" =>   from[Ways.app_lat_key],
-          "#{Ways.api_origin_long_key}" =>  from[Ways.app_long_key],
-          "#{Ways.api_dest_lat_key}" =>     to[Ways.app_lat_key],
-          "#{Ways.api_dest_long_key}" =>    to[Ways.app_long_key],
-          "#{Ways.api_time_key}" =>         date_time.strftime('%H:%M'),
-          "#{Ways.api_date_key}" =>         date_time.strftime('%Y-%m-%d'),
-          "#{Ways.api_format_key}" =>       Ways.api_format
+          "accessId" =>    Ways.api_access_id,
+          "lang" =>         lang,
+          "originCoordLat" =>   from[:lat],
+          "originCoordLong" =>  from[:long],
+          "destCoordLat" =>     to[:lat],
+          "destCoordLong" =>    to[:long],
+          "time" =>         date_time.strftime('%H:%M'),
+          "date" =>         date_time.strftime('%Y-%m-%d'),
+          "format" =>       "json"
         }
         
-        params.update( "#{Ways.api_arrival_bool_key}" => opts[:arrival] ) unless opts[:arrival].nil?
-        params.update( "#{Ways.api_results_before_count_key}" => opts[:trips_before] ) unless opts[:trips_before].nil?
-        params.update( "#{Ways.api_results_after_count_key}" => opts[:trips_after] ) unless opts[:trips_after].nil?
-        params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) unless opts[:origin_walk].nil?
+        params.update( "searchForArrival" => opts[:arrival] ) unless opts[:arrival].nil?
+        params.update( "numB" => opts[:trips_before] ) unless opts[:trips_before].nil?
+        params.update( "numF" => opts[:trips_after] ) unless opts[:trips_after].nil?
+        params.update( "originWalk" => opts[:origin_walk] ) unless opts[:origin_walk].nil?
 
         params
       end

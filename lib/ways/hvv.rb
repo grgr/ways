@@ -10,9 +10,8 @@ module Ways
 
       def prepare_results(res)
         parsed = JSON.parse(res.body)
-        #binding.pry
-        parsed[Ways.resp_leglist_key].inject([]) do |results, trip|
-          result = {duration: trip[Ways.resp_trip_duration_key]}
+        parsed['schedules'].inject([]) do |results, trip|
+          result = {duration: trip['time']}
           result.update leglist: extract_leg_info(trip) 
           results << result
           results
@@ -20,29 +19,24 @@ module Ways
       end
 
       def extract_leg_info(leglist)
-        leglist[Ways.resp_leg_key].inject([]) do |new_leglist, leg|
+        leglist['scheduleElements'].inject([]) do |new_leglist, leg|
 
           extracted = {info: {}, origin: {}, dest: {}}
 
-          #extracted[:info].update index: leg[Ways.resp_leg_idx_key]
-          extracted[:info].update type: unify_output(leg[Ways.resp_leg_line_key][Ways.resp_leg_type_key][Ways.resp_leg_simple_type_key])
-          extracted[:info].update direction: leg[Ways.resp_leg_line_key][Ways.resp_leg_direction_key]
-          #extracted[:info].update category: leg[Ways.resp_leg_category_key]
-          #extracted[:info].update name: leg[Ways.resp_leg_name_key]
-          #extracted[:info].update duration: leg[Ways.resp_leg_duration_key]
-          #extracted[:info].update distance: leg[Ways.resp_leg_dist_key]
+          extracted[:info].update type: unify_output(leg['line']['type']['simpleType'])
+          extracted[:info].update direction: leg['line']['direction']
 
-          extracted[:origin].update name: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_name_key]
-          extracted[:origin].update type: unify_output(leg[Ways.resp_leg_origin_key][Ways.resp_leg_type_key])
-          extracted[:origin].update serviceTypes: extract_service_types(leg[Ways.resp_leg_origin_key][Ways.resp_leg_service_types_key])
-          extracted[:origin].update time: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_datetime_key][Ways.resp_leg_origin_time_key]
-          extracted[:origin].update date: leg[Ways.resp_leg_origin_key][Ways.resp_leg_origin_datetime_key][Ways.resp_leg_origin_date_key]
+          extracted[:origin].update name: leg['from']['name']
+          extracted[:origin].update type: unify_output(leg['from']['type'])
+          extracted[:origin].update serviceTypes: extract_service_types(leg['from']['serviceTypes'])
+          extracted[:origin].update time: leg['from']['depTime']['time']
+          extracted[:origin].update date: leg['from']['depTime']['date']
 
-          extracted[:dest].update name: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_name_key]
-          extracted[:dest].update type: unify_output(leg[Ways.resp_leg_dest_key][Ways.resp_leg_type_key])
-          extracted[:dest].update serviceTypes: extract_service_types(leg[Ways.resp_leg_dest_key][Ways.resp_leg_service_types_key])
-          extracted[:dest].update time: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_time_key]
-          extracted[:dest].update date: leg[Ways.resp_leg_dest_key][Ways.resp_leg_dest_datetime_key][Ways.resp_leg_dest_date_key]
+          extracted[:dest].update name: leg['to']['name']
+          extracted[:dest].update type: unify_output(leg['to']['type'])
+          extracted[:dest].update serviceTypes: extract_service_types(leg['to']['serviceTypes'])
+          extracted[:dest].update time: leg['to']['arrTime']['time']
+          extracted[:dest].update date: leg['to']['arrTime']['date']
 
           new_leglist << extracted if extracted[:info][:type] != 'CHANGE'
           new_leglist
@@ -71,8 +65,8 @@ module Ways
         hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), Ways.api_password.encode("UTF-8"), req.body.to_s)
         signature = Base64.encode64(hmac).chomp
 
-        req[Ways.api_username_key] = Ways.api_username
-        req[Ways.api_password_key] = signature
+        req['geofox-auth-user'] = Ways.api_username
+        req['geofox-auth-signature'] = signature
 
         req['geofox-auth-type'] = 'HmacSHA1'
         req['Accept'] = 'application/json'
@@ -85,32 +79,31 @@ module Ways
 
       def parametrize(from, to, date_time, lang, opts)
         params = {
-          "#{Ways.api_version_key}" =>      Ways.api_version,
-          "#{Ways.api_lang_key}" =>         lang,
-          "#{Ways.api_origin_key}" => {
-            "#{Ways.place_type.downcase}" => {
-              "#{Ways.api_origin_lat_key}" =>  from[Ways.app_lat_key],
-              "#{Ways.api_origin_long_key}" => from[Ways.app_long_key],
+          "version" =>      Ways.api_version,
+          "language" =>         lang,
+          "start" => {
+            "coordinate" => {
+              "y" => from[:lat],
+              "x" => from[:long],
             },
-            "#{Ways.place_type_key}" => Ways.place_type 
+            "type" => 'COORDINATE' 
           },
-          "#{Ways.api_dest_key}" => {
-            "#{Ways.place_type.downcase}" => {
-              "#{Ways.api_dest_lat_key}" =>    to[Ways.app_lat_key],
-              "#{Ways.api_dest_long_key}" =>   to[Ways.app_long_key],
+          "dest" => {
+            "coordinate" => {
+              "y" =>   to[:lat],
+              "x" =>   to[:long],
             },
-            "#{Ways.place_type_key}" => Ways.place_type 
+            "type" => 'COORDINATE' 
           },
-          "#{Ways.api_time_key}" => {
-            "#{Ways.api_time_key}" =>          date_time.strftime('%H:%M'),
-            "#{Ways.api_date_key}" =>          date_time.strftime('%d.%m.%Y'),
+          "time" => {
+            "time" =>          date_time.strftime('%H:%M'),
+            "date" =>          date_time.strftime('%d.%m.%Y'),
           }
         }
         
-        params.update( "#{Ways.api_departure_bool_key}" => !opts[:arrival] ) unless opts[:arrival].nil?
-        params.update( "#{Ways.api_results_before_count_key}" => opts[:trips_before] ) unless opts[:trips_before].nil?
-        params.update( "#{Ways.api_results_after_count_key}" => [0, opts[:trips_after] - 1].max ) unless opts[:trips_after].nil?
-        #params.update( "#{Ways.api_origin_walk_key}" => opts[:origin_walk] ) unless opts[:origin_walk].nil?
+        params.update( "timeIsDeparture" => !opts[:arrival] ) unless opts[:arrival].nil?
+        params.update( "schedulesBefore" => opts[:trips_before] ) unless opts[:trips_before].nil?
+        params.update( "schedulesAfter" => [0, opts[:trips_after] - 1].max ) unless opts[:trips_after].nil?
 
         params
       end
